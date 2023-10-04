@@ -145,7 +145,7 @@ bool Card::is_right_bower(Suit trump) const{
 
 //EFFECTS Returns true if card is the Jack of the next suit
 bool Card::is_left_bower(Suit trump) const{
-  if (Suit_next(trump) == JACK) {
+  if (Suit_next(trump) == suit && rank == JACK) {
     return true;
   } else {
     return false;
@@ -157,20 +157,21 @@ bool Card::is_left_bower(Suit trump) const{
 bool Card::is_trump(Suit trump) const{
   if (suit == trump) {
     return true;
-  } else if (is_left_bower) {
+  } else if (is_left_bower(trump)) {
     return true;
   } else {
     return false;
   }
+  return false;
 }
 
 //EFFECTS returns the next suit, which is the suit of the same color
 Suit Suit_next(Suit suit){
-  if (suit = SPADES) {
+  if (suit == SPADES) {
     return CLUBS;
-  } else if (suit = HEARTS) {
+  } else if (suit == HEARTS) {
     return DIAMONDS;
-  } else if (suit = CLUBS) {
+  } else if (suit == CLUBS) {
     return SPADES;
   } else {
     return HEARTS;
@@ -181,13 +182,102 @@ Suit Suit_next(Suit suit){
 //EFFECTS Returns true if a is lower value than b.  Uses trump to determine
 // order, as described in the spec.
 bool Card_less(const Card &a, const Card &b, Suit trump){
-  assert(false); //IMPLEMENT THIS
+
+  //might trigger the deep nesting problem TT 
+  
+  if (b.is_right_bower(trump)) { //if b is the highest card
+    return true;
+  } else if (b.is_left_bower(trump)) { //if b is the second highest card
+    if (a.is_right_bower(trump)) { //if a is the highest card
+      return false;
+    } else { //if a is not the highest card
+      return true;
+    }
+  } else if (b.get_suit() == trump) { //if b is trump but NOT a bower
+    if (a.get_suit() == trump) { //if a is trump
+      if(a.get_rank() < b.get_rank()) { //if a is a lower trump than b
+        return true;
+      } else { //if a is a higher trump than b
+        return false;
+      }
+    } else if (!a.is_left_bower(trump) ) { //if a is NOT left bower while b is a non-bower trump
+      return true;
+    } else { //if a IS left bower while b is a non-bower trump
+      return false;
+    }
+  } else if (b.get_suit() != trump) {
+    if (a.get_suit() == trump || a.is_left_bower(trump)) {
+      return false;
+    } else {
+      if (a.get_rank() < b.get_rank()) {
+        return true;
+      } else if (a.get_rank() == b.get_rank()){ //if a and b are not trumps and have the same rank (e.g. two of hearts and two of diamonds with clubs trump)
+        if(a.get_suit() < b.get_suit()) { //decide based on suit ranking of non trump cards
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+  } 
+  return false;
 }
 
 //EFFECTS Returns true if a is lower value than b.  Uses both the trump suit
 //  and the suit led to determine order, as described in the spec.
 bool Card_less(const Card &a, const Card &b, const Card &led_card, Suit trump){
-  assert(false); //IMPLEMENT THIS 
+  //might trigger the deep nesting problem TT 
+  
+  if (b.is_right_bower(trump)) { //if b is the highest card
+    return true;
+  } else if (b.is_left_bower(trump)) { //if b is the second highest card
+    if (a.is_right_bower(trump)) { //if a is the highest card
+      return false;
+    } else { //if a is not the highest card
+      return true;
+    }
+  } else if (b.get_suit() == trump) { //if b is trump but NOT a bower
+    if (a.get_suit() == trump) { //if a is trump
+      if(a.get_rank() < b.get_rank()) { //if a is a lower trump than b
+        return true;
+      } else { //if a is a higher trump than b
+        return false;
+      }
+    } else if (!a.is_left_bower(trump) ) { //if a is NOT left bower while b is a non-bower trump
+      return true;
+    } else { //if a IS left bower while b is a non-bower trump
+      return false;
+    }
+  } else if (b.get_suit() == led_card.get_suit()){ //if b is the same suit as the led card
+    if (a.get_suit() != led_card.get_suit()) { //if a is not the same suit as the led card suit
+      if (a.is_trump(trump) || a.is_left_bower(trump)) { //if a is trump or if a is the left bower
+        return false;
+      } else { //if a is not trump or the left bower
+        return true;
+      }
+    } else { //if a is the same suit as the led card suit
+      if (a.get_rank() < b.get_rank()) { //compare the ranks 
+        return true;
+      } else {
+        return false;
+      }
+    }
+  } else if (b.get_suit() != trump) {
+    if (a.get_suit() == trump || a.is_left_bower(trump)) {
+      return false;
+    } else {
+      if (a.get_rank() < b.get_rank()) {
+        return true;
+      } else if (a.get_rank() == b.get_rank()){ //if a and b are not trumps and have the same rank (e.g. two of hearts and two of diamonds with clubs trump)
+        if(a.get_suit() < b.get_suit()) { //decide based on suit ranking of non trump cards
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+  } 
+  return false;
 }
 
 //EFFECTS Prints Card to stream, for example "Two of Spades"
@@ -208,6 +298,7 @@ std::istream & operator>>(std::istream &is, Card &card){
   card.rank = rank;
   card.suit = suit;
 
+  return is;
 }
 
 //EFFECTS Returns true if lhs is lower value than rhs.
@@ -234,6 +325,7 @@ bool operator<=(const Card &lhs, const Card &rhs){
 	} else {
 		return false;
 	}
+  return false;
 }
 
 //EFFECTS Returns true if lhs is higher value than rhs.
@@ -258,6 +350,7 @@ bool operator>=(const Card &lhs, const Card &rhs){
   } else {
     return false;
   }
+  return false;
 }
 
 //EFFECTS Returns true if lhs is same card as rhs.

@@ -178,66 +178,106 @@ Suit Suit_next(Suit suit){
 }
 
 
-//STILL NEED TO IMPLEMENT BELOW
-
 //EFFECTS Returns true if a is lower value than b.  Uses trump to determine
 // order, as described in the spec.
 bool Card_less(const Card &a, const Card &b, Suit trump){
-  assert(false);
+  assert(false); //IMPLEMENT THIS
 }
 
 //EFFECTS Returns true if a is lower value than b.  Uses both the trump suit
 //  and the suit led to determine order, as described in the spec.
 bool Card_less(const Card &a, const Card &b, const Card &led_card, Suit trump){
-  assert(false);
+  assert(false); //IMPLEMENT THIS 
 }
 
 //EFFECTS Prints Card to stream, for example "Two of Spades"
 std::ostream & operator<<(std::ostream &os, const Card &card){
-  assert(false);
+  os << card.get_rank() << " of " << card.get_suit();
+  return os;
 }
 
 //EFFECTS Reads a Card from a stream in the format "Two of Spades"
 //NOTE The Card class declares this operator>> "friend" function,
 //     which means it is allowed to access card.rank and card.suit.
 std::istream & operator>>(std::istream &is, Card &card){
-  assert(false);
+  Rank rank;
+  Suit suit;
+  string of = "of";
+  is >> rank >> of >> suit;
+
+  card.rank = rank;
+  card.suit = suit;
+
 }
 
 //EFFECTS Returns true if lhs is lower value than rhs.
 //  Does not consider trump.
 bool operator<(const Card &lhs, const Card &rhs){
-  assert(false);
+  
+	if (lhs.get_rank() < rhs.get_rank()) {
+		return true;
+	} else {
+		return false;
+	}
+
 }
 
 //EFFECTS Returns true if lhs is lower value than rhs or the same card as rhs.
 //  Does not consider trump.
 bool operator<=(const Card &lhs, const Card &rhs){
-  assert(false);
+  if (lhs.get_rank() < rhs.get_rank()) {
+		return true;
+	} else if (lhs.get_rank() == rhs.get_rank()) {
+		if (lhs.get_suit() < rhs.get_suit()) {
+			return true;
+		}
+	} else {
+		return false;
+	}
 }
 
 //EFFECTS Returns true if lhs is higher value than rhs.
 //  Does not consider trump.
 bool operator>(const Card &lhs, const Card &rhs){
-  assert(false);
+  if (lhs.get_rank() > rhs.get_rank()) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 //EFFECTS Returns true if lhs is higher value than rhs or the same card as rhs.
 //  Does not consider trump.
 bool operator>=(const Card &lhs, const Card &rhs){
-  assert(false);
+  if (lhs.get_rank() > rhs.get_rank()) {
+    return true;
+  } else if (lhs.get_rank() == rhs.get_rank()) {
+    if (lhs.get_suit() > rhs.get_suit()) {
+      return true;
+    }
+  } else {
+    return false;
+  }
 }
 
 //EFFECTS Returns true if lhs is same card as rhs.
 //  Does not consider trump.
 bool operator==(const Card &lhs, const Card &rhs){
-  assert(false);
+  if (lhs.get_rank() == rhs.get_rank()) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 //EFFECTS Returns true if lhs is not the same card as rhs.
 //  Does not consider trump.
 bool operator!=(const Card &lhs, const Card &rhs){
-  assert(false);
+  if (lhs.get_rank() != rhs.get_rank()){
+    return true;
+  } else {
+    return false;
+  }
 }
 
 // NOTE: We HIGHLY recommend you check out the operator overloading

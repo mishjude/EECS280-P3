@@ -321,7 +321,9 @@ bool operator<=(const Card &lhs, const Card &rhs){
 	} else if (lhs.get_rank() == rhs.get_rank()) {
 		if (lhs.get_suit() < rhs.get_suit()) {
 			return true;
-		}
+		} else if (lhs.get_suit() == rhs.get_suit()) {
+			return true;
+    }
 	} else {
 		return false;
 	}
@@ -346,6 +348,8 @@ bool operator>=(const Card &lhs, const Card &rhs){
   } else if (lhs.get_rank() == rhs.get_rank()) {
     if (lhs.get_suit() > rhs.get_suit()) {
       return true;
+    } else if (lhs.get_suit() == rhs.get_suit()) {
+			return true;
     }
   } else {
     return false;

@@ -8,15 +8,17 @@
 using namespace std;
 
 //derived class
+
+//SIMPLE PLAYER
 class Simple: public Player {
   private:
     string player_name;
     vector<Card> player_hand;
   public:
-    Simple(string p_name) : player_name(p_name) {}
+    Simple(const std::string &p_name) : player_name(p_name) {}
     
     //EFFECTS returns player's name
-    virtual const std::string & get_name() {
+    virtual const std::string & get_name() const {
       return player_name;
     }
     
@@ -32,7 +34,7 @@ class Simple: public Player {
     //  change order_up_suit to desired suit.  If Player wishes to pass, then do
     //  not modify order_up_suit and return false.
     virtual bool make_trump(const Card &upcard, bool is_dealer,
-                          int round, Suit &order_up_suit) {
+                          int round, Suit &order_up_suit) const {
       int num_trump = 0;
       if (round == 1) {
         for (int i = 0; i < player_hand.size(); i++) {
@@ -41,7 +43,7 @@ class Simple: public Player {
           }
         }
         if (num_trump >= 2) {
-          order_up_suit == upcard.get_suit();
+          order_up_suit = upcard.get_suit();
           return true;
         }
       } else if (round == 2) {
@@ -58,9 +60,9 @@ class Simple: public Player {
          if (is_dealer) {
           order_up_suit = next_suit;
          }
-      } else {
-        return false;
-      }
+      } 
+      return false;
+      
     }
 
     //REQUIRES Player has at least one card
@@ -110,30 +112,35 @@ class Simple: public Player {
     virtual Card play_card(const Card &led_card, Suit trump) {
       int highest_index = 4;
       int lowest_index = 0;
+      Card card_to_play;
+      sort(player_hand.begin(), player_hand.end());
+     
       for (int i = 0; i < player_hand.size(); i++) {
         if (player_hand[i].get_suit() == led_card.get_suit()) {
           if (Card_less(player_hand[highest_index], player_hand[i], led_card, trump)) {
             highest_index = i;
           }
         }
-        Card highest = player_hand[highest_index];
+        card_to_play = player_hand[highest_index];
         player_hand.erase(player_hand.begin() + highest_index);
-        return highest;
+        break;
       }
 
       for (int i = 0; i < player_hand.size(); i++) {
-        if (player_hand[i].get_suit() == led_card.get_suit()) {
+        if (player_hand[i].get_suit() != led_card.get_suit()) {
           if (Card_less(player_hand[i], player_hand[lowest_index], led_card, trump)) {
             lowest_index = i;
           }
         }
-        Card lowest = player_hand[lowest_index];
+        card_to_play = player_hand[lowest_index];
         player_hand.erase(player_hand.begin() + lowest_index);
-        return lowest;
+        break;
       }
+      return card_to_play;
     }
-  };
+};
 
+//HUMAN PLAYER
 class Human: public Player {
   private:
     string player_name;
@@ -147,8 +154,9 @@ class Human: public Player {
     }
 
   public:
-    Human(string p_name) : player_name(p_name) {}
-    virtual const std::string & get_name() {
+    Human(const std::string &p_name) : player_name(p_name) {}
+
+    virtual const std::string & get_name() const {
       return player_name;
     }
     
@@ -167,7 +175,7 @@ class Human: public Player {
     //  change order_up_suit to desired suit.  If Player wishes to pass, then do
     //  not modify order_up_suit and return false.
     virtual bool make_trump(const Card &upcard, bool is_dealer,
-                          int round, Suit &order_up_suit) {
+                          int round, Suit &order_up_suit) const {
       if (round == 1 || round == 2) {
         for (int i = 0; i < player_hand.size(); i++) {
           print_hand();
@@ -183,9 +191,9 @@ class Human: public Player {
         } else {
           return false;
         }
-      } else {
-        return false;
-      }
+      } 
+      return false;
+      
     }
 
     //REQUIRES Player has at least one card
@@ -194,8 +202,8 @@ class Human: public Player {
       bool dealer = true;
       int round{};
       sort(player_hand.begin(), player_hand.end());
-      Suit ordered_up_suit;
-      if (dealer && round == 1 && upcard.get_suit() == ordered_up_suit) {
+      string ordered_up_suit;
+      if (dealer && round == 1 && upcard.get_suit() == string_to_suit(ordered_up_suit)) {
         for (int i = 0; i < player_hand.size(); i++) {
           print_hand();
           cout << "Discard upcard: [-1]" << endl;
@@ -229,6 +237,8 @@ class Human: public Player {
 
       player_hand.erase(player_hand.begin() + response);
 
+      return player_hand[response];
+
     }
     //REQUIRES Player has at least one card
     //EFFECTS  Plays one Card from Player's hand according to their strategy.
@@ -252,9 +262,9 @@ Player * Player_factory(const std::string &name,
   // the corresponding player type.
   if (strategy == "Simple") {
     // The "new" keyword dynamically allocates an object.
-    return new SimplePlayer(name);
+    return new Simple(name);
   } else if (strategy == "Human") {
-    return new HumanPlayer(name);
+    return new Human(name);
   } else {
     // Invalid strategy if we get here
   assert(false);

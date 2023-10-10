@@ -35,6 +35,12 @@ using namespace std;
   // MODIFIES: pack_input
   // EFFECTS: Initializes Pack by reading from pack_input.
   Pack::Pack(std::istream& pack_input){
+    /* figure out inputs with while loop
+    int x;
+    while (pack_input.is_good()) {
+      pack_input >> cards[i];
+    }
+    */
     for (int i = 0; i < PACK_SIZE; i++) {
       pack_input >> cards[i];
     }
@@ -56,28 +62,33 @@ using namespace std;
   //          performs an in shuffle seven times. See
   //          https://en.wikipedia.org/wiki/In_shuffle.
   void Pack::shuffle(){
-    int middle = cards.size()/2;
+    const int half_size = PACK_SIZE/2;
+    Card first_half[half_size];
+    Card second_half[half_size];
     Card shuffled[PACK_SIZE];
 
-    int j = 0;
-    int k = 0;
-
-    while (j < middle) {
-      shuffled[k++] = cards[j + middle];
-      shuffled[k++] = cards[j++];
-    }
     
-    /*
-    for (int i = 0; i < 7; i++) {
-      for (int j = 0, k = 0; j < middle; j++, k++) {
-        shuffled[k] = cards[j + middle];
-        k++;
-        shuffled[k] = cards[j];
-        
+    for (int m = 0; m < PACK_SIZE; m++) {
+      shuffled[m] = cards[m];
+    }
+
+    for (int k = 0; k < 7; k++) {
+      //resets the first and second half of the decks after each shuffle?
+      for (int p = 0; p < half_size; p++) {
+        first_half[p] = shuffled[p];
+      }
+
+      for (int q = half_size + 1; q < PACK_SIZE; q++) {
+        second_half[q] = shuffled[q];
+      }
+
+      //interweaves the deck
+      for (int i = 0, j = 0; i < half_size; i++) {
+        shuffled[j] = second_half[i];
+        shuffled[j + 1] = first_half[i];
+        j++;
       }
     }
-    */
-
     for (int l = 0; l < PACK_SIZE; l++) {
       cards[l] = shuffled[l];
     }

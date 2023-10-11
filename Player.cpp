@@ -97,8 +97,11 @@ class Simple: public Player {
         } else if (trumps == false) {
           if (player_hand[i].get_suit() != trump &&
           Card_less(player_hand[highest_index], player_hand[i], trump)) {
+            if (player_hand[highest_index].get_suit() == trump) {
+              highest_index = i;
+            }
             highest_index = i;
-          }
+          } 
         }
       }
       Card highest = player_hand[highest_index];
@@ -120,8 +123,9 @@ class Simple: public Player {
           if (Card_less(player_hand[highest_index], player_hand[i], led_card, trump)) {
             highest_index = i;
           }
+          card_to_play = player_hand[highest_index];
         }
-        card_to_play = player_hand[highest_index];
+
         player_hand.erase(player_hand.begin() + highest_index);
         break;
       }

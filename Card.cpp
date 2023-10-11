@@ -195,10 +195,14 @@ bool Card_less(const Card &a, const Card &b, Suit trump){
     }
   } else if (b.get_suit() == trump) { //if b is trump but NOT a bower
     if (a.get_suit() == trump) { //if a is trump
-      if(a.get_rank() < b.get_rank()) { //if a is a lower trump than b
-        return true;
-      } else { //if a is a higher trump than b
+      if (a.get_rank() == JACK) {
         return false;
+      } else {
+        if(a.get_rank() < b.get_rank()) { //if a is a lower trump than b
+          return true;
+        } else { //if a is a higher trump than b
+          return false;
+        }
       }
     } else if (!a.is_left_bower(trump) ) { //if a is NOT left bower while b is a non-bower trump
       return true;

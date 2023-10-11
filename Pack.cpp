@@ -36,15 +36,17 @@ using namespace std;
   // EFFECTS: Initializes Pack by reading from pack_input.
   Pack::Pack(std::istream& pack_input){
     
-    int i = 0;
+    //how to use input with while loop to address undefined behaviour?
+    /* int i = 0;
     while (i < PACK_SIZE && pack_input >> cards[i]) {
         i++;
     }
-    /* figure out inputs with while loop 
+    */
+    
     for (int i = 0; i < PACK_SIZE; i++) {
       pack_input >> cards[i];
     }
-    */
+    
   }
 
   // REQUIRES: cards remain in the Pack

@@ -35,15 +35,16 @@ using namespace std;
   // MODIFIES: pack_input
   // EFFECTS: Initializes Pack by reading from pack_input.
   Pack::Pack(std::istream& pack_input){
-    /* figure out inputs with while loop
-    int x;
-    while (pack_input.is_good()) {
-      pack_input >> cards[i];
+    
+    int i = 0;
+    while (i < PACK_SIZE && pack_input >> cards[i]) {
+        i++;
     }
-    */
+    /* figure out inputs with while loop 
     for (int i = 0; i < PACK_SIZE; i++) {
       pack_input >> cards[i];
     }
+    */
   }
 
   // REQUIRES: cards remain in the Pack
@@ -92,6 +93,8 @@ using namespace std;
     for (int l = 0; l < PACK_SIZE; l++) {
       cards[l] = shuffled[l];
     }
+
+    reset();
   }
 
   // EFFECTS: returns true if there are no more cards left in the pack

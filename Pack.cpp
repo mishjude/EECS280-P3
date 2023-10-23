@@ -61,31 +61,16 @@ using namespace std;
   //          https://en.wikipedia.org/wiki/In_shuffle.
   void Pack::shuffle(){
     const int half_size = PACK_SIZE / 2;
-    //Card first_half[half_size];
-    //Card second_half[half_size];
-    
-    
+    Card first_half[half_size];
+    Card second_half[half_size];
+    Card shuffled[PACK_SIZE];
 
-    
+    for (int m = 0; m < PACK_SIZE; m++) {
+        shuffled[m] = cards[m];
+    }
 
     for (int k = 0; k < 7; k++) {
-      //Card shuffled[PACK_SIZE];
-      int index = 0;
-      array<Card, PACK_SIZE> shuffled = cards;
-      /*
-      for (int m = 0; m < PACK_SIZE; m++) {
-        shuffled[m] = cards[m];
-      }
-      */
-      for (int shift = 1; shift >= 0; shift--) {
-        for (int l = 0; l < half_size; l++) {
-          cards[l*2 + shift] = shuffled[index];
-          index++;
-
-        }
-      }
         // Resets the first and second half of the decks after each shuffle
-        /*
         for (int p = 0; p < half_size; p++) {
             first_half[p] = shuffled[p];
             second_half[p] = shuffled[half_size + p];
@@ -96,18 +81,15 @@ using namespace std;
             shuffled[j] = second_half[i];
             shuffled[j + 1] = first_half[i];
             j += 2;
-            
         }
-        
     }
 
     for (int l = 0; l < PACK_SIZE; l++) {
         cards[l] = shuffled[l];
     }
-    */
-    }
 
     reset();
+    
   }
 
   // EFFECTS: returns true if there are no more cards left in the pack

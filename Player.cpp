@@ -38,7 +38,8 @@ class Simple: public Player {
       int num_trump = 0;
       if (round == 1) {
         for (int i = 0; i < player_hand.size(); i++) {
-          if (player_hand[i].is_face_or_ace() && player_hand[i].is_trump(upcard.get_suit())) {
+          if (player_hand[i].is_face_or_ace() && 
+              player_hand[i].is_trump(upcard.get_suit())) {
             num_trump++;
           }
         }
@@ -49,7 +50,8 @@ class Simple: public Player {
       } else if (round == 2) {
         Suit next_suit = Suit_next(upcard.get_suit());
         for (int i = 0; i < player_hand.size(); i++) {
-          if (player_hand[i].is_face_or_ace() && player_hand[i].is_trump(upcard.get_suit())) {
+          if (player_hand[i].is_face_or_ace() && 
+              player_hand[i].is_trump(upcard.get_suit())) {
             num_trump++;
           }
         }
@@ -84,13 +86,38 @@ class Simple: public Player {
     //  "Lead" means to play the first Card in a trick.  The card
     //  is removed the player's hand.
     virtual Card lead_card(Suit trump) {
-      int highest_index = 3;
-      bool trumps = true;
+      int highest_index = 0;
+      int num_trumps = 0;
+    
+      //bool trumps = true;
       for (int i = 0; i < player_hand.size(); i++) {
-        if (player_hand[i].get_suit() != trump) {
-          trumps = false;
+        if (player_hand[i].get_suit() == trump || 
+            (player_hand[i].get_suit() == Suit_next(trump) 
+             && player_hand[i].get_rank() == JACK)) {
+          num_trumps++;
         }
       }
+
+      if (num_trumps == player_hand.size()) {
+        for (int i = 0; i < player_hand.size(); i++) {
+          if (Card_less(player_hand[highest_index], player_hand[i], trump)) {
+            highest_index = i;
+          }
+        }
+      } else {
+          for (int i = 0; i < player_hand.size(); i++) {
+            if (player_hand[i].get_suit() != trump && 
+                !(player_hand[i].get_suit() == Suit_next(trump) 
+                  && player_hand[i].get_rank() == JACK) 
+                  && Card_less(player_hand[highest_index], player_hand[i], trump)) {
+                     highest_index = i;
+            }
+          }
+        
+      }
+      /*
+
+
       for (int i = 0; i < player_hand.size(); i++) {
         if (trumps && Card_less(player_hand[highest_index], player_hand[i], trump)) {
           highest_index = i;
@@ -104,6 +131,7 @@ class Simple: public Player {
           } 
         }
       }
+      */
       Card highest = player_hand[highest_index];
       player_hand.erase(player_hand.begin() + highest_index);
       return highest;
@@ -113,22 +141,30 @@ class Simple: public Player {
     //EFFECTS  Plays one Card from Player's hand according to their strategy.
     //  The card is removed from the player's hand.
     virtual Card play_card(const Card &led_card, Suit trump) {
-      int highest_index = 4;
+      int highest_index = 0;
       int lowest_index = 0;
+      vector<Card> same_suit_cards;
       Card card_to_play;
       sort(player_hand.begin(), player_hand.end());
      
       for (int i = 0; i < player_hand.size(); i++) {
         if (player_hand[i].get_suit() == led_card.get_suit()) {
+          same_suit_cards.push_back(player_hand[i]);
+        }
+      }
+
+      if (same_suit_cards.size() != 0) {
+        for (int i = 0; i < same_suit_cards.size(); i++) {
           if (Card_less(player_hand[highest_index], player_hand[i], led_card, trump)) {
             highest_index = i;
           }
-          card_to_play = player_hand[highest_index];
         }
-
+        card_to_play = player_hand[highest_index];
         player_hand.erase(player_hand.begin() + highest_index);
-        break;
+        return card_to_play;
       }
+        
+      
 
       for (int i = 0; i < player_hand.size(); i++) {
         if (player_hand[i].get_suit() != led_card.get_suit()) {
@@ -183,7 +219,8 @@ class Human: public Player {
       if (round == 1 || round == 2) {
         for (int i = 0; i < player_hand.size(); i++) {
           print_hand();
-          cout << "Human player " << player_name << ", please enter a suit, or \"pass\":" << endl;
+          cout << "Human player " << player_name << 
+                  ", please enter a suit, or \"pass\":" << endl;
         }
 
         string response;
@@ -207,11 +244,13 @@ class Human: public Player {
       int round{};
       sort(player_hand.begin(), player_hand.end());
       string ordered_up_suit;
-      if (dealer && round == 1 && upcard.get_suit() == string_to_suit(ordered_up_suit)) {
+      if (dealer && round == 1 && 
+          upcard.get_suit() == string_to_suit(ordered_up_suit)) {
         for (int i = 0; i < player_hand.size(); i++) {
           print_hand();
           cout << "Discard upcard: [-1]" << endl;
-          cout << "Human player " << player_name << ", please select a card to discard:" << endl;
+          cout << "Human player " << player_name << 
+                  ", please select a card to discard:" << endl;
 
           int response = 0;
           cin >> response;
@@ -251,7 +290,8 @@ class Human: public Player {
       sort(player_hand.begin(), player_hand.end());
 
       print_hand();
-      cout << "Human player " << player_name << ", please select a card to discard:" << endl;
+      cout << "Human player " << player_name << 
+              ", please select a card to discard:" << endl;
 
       int response = 0;
       cin >> response;

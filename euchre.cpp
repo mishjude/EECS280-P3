@@ -27,24 +27,23 @@ class Game {
   vector<Player*> players;
   Pack pack;
   Card upcard;
-  bool is_dealer;
   string shuffle_or_no;
-  int dealer_index;
-  int round;
+  int dealer_index = 0;
+  int round = 0;
   Suit trump;
-  int hand;
-  int t1_points;
-  int t2_points;
+  int hand = 0;
+  int t1_points = 0;
+  int t2_points = 0;
   int player_make_trump;
-  int t1_num_tricks;
-  int t2_num_tricks;
-  int points_to_win;
+  int t1_num_tricks = 0;
+  int t2_num_tricks = 0;
+  int points_to_win = 0;
   vector<Player*> t1;
   vector<Player*> t2;
 
   void deal(); 
   void shuffle(); 
-  void make_trump(Card &upcard, int round, Suit trump); 
+  void make_trump(Card &upCard, int round, Suit trump); 
   void play_hand(); 
   void add_player(Player *player); 
   void change_dealer(); 
@@ -79,7 +78,7 @@ void Game::deal() {
   players[dealer_index]->add_card(pack.deal_one());
   players[dealer_index]->add_card(pack.deal_one());
 
-  Card upcard = pack.deal_one();
+  upcard = pack.deal_one();
   cout << "Hand " << hand << endl;
   hand++;
   cout << players[dealer_index]->get_name() << " deals" << endl;
@@ -126,7 +125,7 @@ void Game::shuffle() {
   if (shuffle_or_no == "shuffle") { //if "shuffle", then call pack shuffle 
     pack.Pack::shuffle();
   } else { //if no shuffle, then don't call pack shuffle
-    return;
+    pack.reset();
   }
   
 }
@@ -137,20 +136,23 @@ void Game::change_dealer() {
 
 
 
-void Game::make_trump(Card &upcard, int round, Suit trump) {
-  //iterate through all players
-  for (int i = 1; i < 5; i++) {
-    //if player orders up suit
-    if (players[(dealer_index + i) % 4]->make_trump(upcard, is_dealer, round, trump)) {
-      trump = upcard.get_suit();
-      cout << players[(dealer_index + i) % 4]->get_name() << 
+void Game::make_trump(Card &upCard, int round, Suit trump) {
+
+  bool trump_made = false;
+  while (trump_made == false) {
+    for (int i = 1; i < 9; i++) {
+      if (players[(dealer_index + i) % 4]->make_trump(upcard, i % 4 == 0, ((i - 1) / 4) + 1, trump)) {
+        cout << players[(dealer_index + i) % 4]->get_name() << 
               " orders up " << trump << endl << endl;
-      players[dealer_index]->add_and_discard(upcard);
-      player_make_trump = (dealer_index + i) % 4;
-      return; //once someone orders up then leave function
-    } else { //if player doesnt order up suit
+              trump_made = true;
+        if (i <= 4) {
+          players[dealer_index]->add_and_discard(upcard);
+        }
+        return;
+    } else { 
       cout << players[(dealer_index + i) % 4]->get_name() << " passes" << endl;
     }
+  }
   }
 }
 
@@ -158,7 +160,7 @@ void Game::play_hand() {
   int leader = (dealer_index + 1) % 4;
   Card led_card;
   Card highest = led_card;
-  Suit trump = led_card.get_suit(); //??
+  //Suit trump = led_card.get_suit(); //??
   
 
   //5 tricks per hand - make a separate function to call the trick 5 times

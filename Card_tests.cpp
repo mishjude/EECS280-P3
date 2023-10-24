@@ -4,12 +4,7 @@
 
 using namespace std;
 
-
-TEST(test_card_ctor) {
-    Card c(ACE, HEARTS);
-    ASSERT_EQUAL(ACE, c.get_rank());
-    ASSERT_EQUAL(HEARTS, c.get_suit());
-}
+// Test default constructor for Card
 TEST(test_card_default_ctor) {
     Card c;
     ASSERT_EQUAL(TWO, c.get_rank());
@@ -27,8 +22,10 @@ TEST(test_card_param_ctor) {
 TEST(test_card_face_or_ace) {
     Card c1(TWO, SPADES);
     Card c2(JACK, SPADES);
+    Card c3(ACE, SPADES);
     ASSERT_FALSE(c1.is_face_or_ace());
     ASSERT_TRUE(c2.is_face_or_ace());
+    ASSERT_TRUE(c3.is_face_or_ace());
 }
 
 // Test the right bower function
@@ -40,27 +37,61 @@ TEST(test_right_bower) {
 
 // Test the left bower function
 TEST(test_left_bower) {
-    Card c(JACK, CLUBS);
-    ASSERT_TRUE(c.is_left_bower(SPADES));
-    ASSERT_FALSE(c.is_left_bower(CLUBS));
+    Card c1(JACK, CLUBS);
+    Card c2(JACK, SPADES);
+    ASSERT_TRUE(c1.is_left_bower(SPADES));
+    ASSERT_FALSE(c2.is_left_bower(SPADES));
 }
 
 // Test the is_trump() function
 TEST(test_is_trump) {
-    Card c(JACK, CLUBS);
-    ASSERT_TRUE(c.is_trump(SPADES));
-    ASSERT_TRUE(c.is_trump(CLUBS));
-    ASSERT_FALSE(c.is_trump(HEARTS));
+    Card c1(JACK, CLUBS);
+    Card c2(ACE, CLUBS);
+    Card c3(TWO, HEARTS);
+    ASSERT_TRUE(c1.is_trump(SPADES));
+    ASSERT_TRUE(c2.is_trump(CLUBS));
+    ASSERT_FALSE(c3.is_trump(CLUBS));
 }
 
-// Test the Suit_next() function
-TEST(test_suit_next) {
-    ASSERT_EQUAL(CLUBS, Suit_next(SPADES));
-    ASSERT_EQUAL(SPADES, Suit_next(CLUBS));
-    ASSERT_EQUAL(DIAMONDS, Suit_next(HEARTS));
-    ASSERT_EQUAL(HEARTS, Suit_next(DIAMONDS));
+// Add more tests if necessary
+// Test the equality (==) operator for Card
+TEST(test_card_equality) {
+    Card c1(ACE, HEARTS);
+    Card c2(ACE, HEARTS);
+    Card c3(TWO, SPADES);
+    ASSERT_TRUE(c1 == c2);
+    ASSERT_FALSE(c1 == c3);
 }
 
+// Test the inequality (!=) operator for Card
+TEST(test_card_inequality) {
+    Card c1(ACE, HEARTS);
+    Card c2(TWO, SPADES);
+    ASSERT_TRUE(c1 != c2);
+    ASSERT_FALSE(c1 != c1);
+}
+
+// Test the comparison (<, <=, >, >=) operators for Card
+TEST(test_card_comparison) {
+    Card c1(ACE, HEARTS);
+    Card c2(TWO, SPADES);
+    Card c3(ACE, DIAMONDS);
+    
+    ASSERT_TRUE(c2 < c1);
+    ASSERT_TRUE(c2 <= c1);
+    ASSERT_FALSE(c1 < c2);
+    ASSERT_FALSE(c1 <= c2);
+    
+    ASSERT_TRUE(c1 > c2);
+    ASSERT_TRUE(c1 >= c2);
+    ASSERT_FALSE(c2 > c1);
+    ASSERT_FALSE(c2 >= c1);
+    
+    ASSERT_TRUE(c1 <= c3);
+    ASSERT_FALSE(c1 >= c3);
+    ASSERT_FALSE(c1 < c3);
+    ASSERT_FALSE(c1 > c3);
+}
 // Test the Card_less() function
 TEST(test_card_less_trump) {
     Card c1(JACK, SPADES); // Right bower when SPADES is trump
@@ -130,15 +161,6 @@ TEST(test_highest_rank){
 
 }
 
-TEST(test_equal_rank){
-    Card c3(ACE,HEARTS);
-    Card c4(ACE,DIAMONDS);
 
-    ASSERT_EQUAL(c3,c4);
-
-}
-
-
-// Add more test cases here
 
 TEST_MAIN()

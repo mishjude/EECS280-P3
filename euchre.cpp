@@ -294,8 +294,6 @@ int main(int argc, char **argv) {
             << "NAME4 TYPE4" << endl;
       }
 
-  
-
   vector<Player*> game_players;
 
   Player * p1 = Player_factory(argv[4], argv[5]);

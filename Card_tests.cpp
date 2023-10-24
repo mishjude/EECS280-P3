@@ -120,7 +120,23 @@ TEST(test_card_stream_overload_mutation) {
     ss >> c2;
     ASSERT_EQUAL(c1, c2);
 }
+//Tests highest rank 
+TEST(test_highest_rank){
+    Card c1(ACE,HEARTS);
+    Card c2(QUEEN,DIAMONDS);
 
+
+    ASSERT_TRUE(c1>c2);
+
+}
+
+TEST(test_equal_rank){
+    Card c3(ACE,HEARTS);
+    Card c4(ACE,DIAMONDS);
+
+    ASSERT_EQUAL(c3,c4);
+
+}
 
 
 // Add more test cases here

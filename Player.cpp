@@ -38,45 +38,6 @@ class Simple: public Player {
 
       assert(round <= 2);
       
-      /*
-      if (round == 1) {
-        int num_trump = 0;
-        for (int i = 0; i < player_hand.size(); i++) {
-          if (player_hand[i].is_face_or_ace() && 
-              player_hand[i].is_trump(upcard.get_suit())) {
-                num_trump++;
-              }
-        }
-        if (num_trump >= 2) {
-          order_up_suit = upcard.get_suit();
-          return true; 
-        } else {
-          return false;
-        }
-
-      } else {
-        if (is_dealer) {
-          order_up_suit = Suit_next(upcard.get_suit());
-          return true;
-        }
-        int num_new_trump = 0; 
-        for (int i = 0; i < player_hand.size(); i++) {
-          if (player_hand[i].is_face_or_ace() && 
-              player_hand[i].is_trump(Suit_next(upcard.get_suit()))) {
-                num_new_trump++;
-              }
-        }
-        if (num_new_trump >= 1) {
-          order_up_suit = Suit_next(upcard.get_suit());
-          return true;
-        } else {
-          return false;
-        }
-      }
-      //return false; 
-
-      */
-      
       int num_trump = 0;
       if (round == 1) {
         for (int i = 0; i < player_hand.size(); i++) {
@@ -108,10 +69,7 @@ class Simple: public Player {
           return false;
         }
       } 
-      return false;
-
-    
-      
+      return false; 
     }
 
     //REQUIRES Player has at least one card
@@ -128,15 +86,15 @@ class Simple: public Player {
       player_hand.erase(player_hand.begin() + lowest_val);
     }
 
-    //REQUIRES Player has at least one card
+   //REQUIRES Player has at least one card
     //EFFECTS  Leads one Card from Player's hand according to their strategy
     //  "Lead" means to play the first Card in a trick.  The card
     //  is removed the player's hand.
     virtual Card lead_card(Suit trump) {
       int highest_index = 0;
       int num_trumps = 0;
-      
-
+    
+      //bool trumps = true;
       for (int i = 0; i < player_hand.size(); i++) {
         if (player_hand[i].get_suit() == trump || 
             (player_hand[i].get_suit() == Suit_next(trump) 
@@ -176,41 +134,11 @@ class Simple: public Player {
     //EFFECTS  Plays one Card from Player's hand according to their strategy.
     //  The card is removed from the player's hand.
     virtual Card play_card(const Card &led_card, Suit trump) {
-
-      /*
-      Suit led_suit = led_card.get_suit(trump);
-      sort(player_hand.begin(), player_hand.end());
-      Card card_to_play;
-
-      int same_suit = 0;
-      for (int i = 0; i < player_hand.size(); i++) {
-        if (player_hand[i].get_suit(trump) == led_suit) {
-          same_suit++;
-        }
-      }
-
-      if (same_suit > 0) {
-        card_to_play = player_hand[0];
-        int index = 0; 
-        for (int i = 0; i < player_hand.size(); i++) {
-          if (Card_less(card_to_play, player_hand[i], led_card, trump) || player_hand[i] == card_to_play) {
-            index = i;
-            card_to_play = player_hand[i];
-          }
-        }
-        player_hand.erase(player_hand.begin() + index);
-      } else {
-        card_to_play = player_hand[0];
-        player_hand.erase(player_hand.begin());
-      }
-
-      return card_to_play;
-      */
       int highest_index = 0;
       int lowest_index = 0;
       vector<Card> same_suit_cards;
       Card card_to_play;
-      //sort(player_hand.begin(), player_hand.end());
+      sort(player_hand.begin(), player_hand.end());
      
       for (int i = 0; i < player_hand.size(); i++) {
         if (player_hand[i].get_suit(trump) == led_card.get_suit()) {
@@ -241,7 +169,6 @@ class Simple: public Player {
         break;
       }
       return card_to_play;
-      
     }
 };
     

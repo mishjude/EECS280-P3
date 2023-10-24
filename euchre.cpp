@@ -7,6 +7,7 @@
 
 using namespace std;
 
+
 class Game {
  public:
  //add outside information as parameters then call it at the end of main
@@ -16,7 +17,7 @@ class Game {
     pack = p;
     points_to_win = points_win;
     shuffle_or_no = shuffled;
-    player_names_and_type = players;
+    players = player_names_and_type;
     
   }
 
@@ -41,8 +42,8 @@ class Game {
   vector<Player*> t1;
   vector<Player*> t2;
 
-  void shuffle(); 
   void deal(); 
+  void shuffle(); 
   void make_trump(Card &upcard, int round, Suit trump); 
   void play_hand(); 
   void add_player(Player *player); 
@@ -52,52 +53,8 @@ class Game {
   void make_teams(); 
   void pack_init(istream& file_name);
   
+  
 };
-
-void Game::make_teams() {
-  
-  //team 1
-  t1.push_back(players[0]);
-  t1.push_back(players[2]);
-
-  //team 2
-  t2.push_back(players[1]);
-  t2.push_back(players[3]);
-}
-
-//function implementation
-
-void Game::update_hand() {
-  hand++;
-}
-
-//initializes players?
-void Game::add_player(Player *player) {
-  players.push_back(player);
-}
-
-//initialises pack?? - not sure if needed
-/*
-void Game::pack_init(istream& file_name) {
-  
-  ifstream pack_filename; //???? how to use command line argument here?
-  pack = Pack(pack_filename);
-}
-*/
-
-void Game::shuffle() {
-  //how to use command line prompt to affect this?
-  if (shuffle_or_no == "shuffle") { //if "shuffle", then call pack shuffle 
-    pack.Pack::shuffle();
-  } else { //if no shuffle, then don't call pack shuffle
-    return;
-  }
-  
-}
-
-void Game::change_dealer() {
-  dealer_index = (dealer_index + 1) % 4;
-}
 
 void Game::deal() {
   //3-2-3-2 then 2-3-2-3
@@ -131,14 +88,63 @@ void Game::deal() {
 
 }
 
+
+
+void Game::make_teams() {
+  
+  //team 1
+  t1.push_back(players[0]);
+  t1.push_back(players[2]);
+
+  //team 2
+  t2.push_back(players[1]);
+  t2.push_back(players[3]);
+}
+
+//function implementation
+
+void Game::update_hand() {
+  hand++;
+}
+
+//initializes players?
+void Game::add_player(Player *player) {
+  players.push_back(player);
+}
+
+//initialises pack?? - not sure if needed
+
+void Game::pack_init(istream& file_name) {
+  
+  ifstream pack_filename; //???? how to use command line argument here?
+  pack = Pack(pack_filename);
+}
+
+
+void Game::shuffle() {
+  //how to use command line prompt to affect this?
+  if (shuffle_or_no == "shuffle") { //if "shuffle", then call pack shuffle 
+    pack.Pack::shuffle();
+  } else { //if no shuffle, then don't call pack shuffle
+    return;
+  }
+  
+}
+
+void Game::change_dealer() {
+  dealer_index = (dealer_index + 1) % 4;
+}
+
+
+
 void Game::make_trump(Card &upcard, int round, Suit trump) {
   //iterate through all players
-  for (int i = 0; i < 4; i++) {
+  for (int i = 1; i < 5; i++) {
     //if player orders up suit
     if (players[(dealer_index + i) % 4]->make_trump(upcard, is_dealer, round, trump)) {
       trump = upcard.get_suit();
       cout << players[(dealer_index + i) % 4]->get_name() << 
-              " orders up " << trump << endl;
+              " orders up " << trump << endl << endl;
       players[dealer_index]->add_and_discard(upcard);
       player_make_trump = (dealer_index + i) % 4;
       return; //once someone orders up then leave function
@@ -220,6 +226,7 @@ void Game::score() {
 }
 
 
+
 void Game::play() {
   while (t1_points < points_to_win && t2_points < points_to_win) { 
     deal();
@@ -230,12 +237,10 @@ void Game::play() {
     update_hand();
   }
   
-  /*
-  for (size_t i = 0; i < players.size(); ++i) {
-    delete players[i];
-  }
-  */
+  
+  
 }
+
 
 //main
 int main(int argc, char **argv) {
@@ -287,29 +292,32 @@ int main(int argc, char **argv) {
             << "NAME4 TYPE4" << endl;
       }
 
-  //print executable and all command line arguments 
-  for (int i = 0; i < 12; i++) {
-    cout << argv[i] << " ";
-  }
-  cout << endl;
+  
 
-  vector<Player*> players;
+  vector<Player*> game_players;
 
   Player * p1 = Player_factory(argv[4], argv[5]);
   Player * p2 = Player_factory(argv[6], argv[7]);
   Player * p3 = Player_factory(argv[8], argv[9]);
   Player * p4 = Player_factory(argv[10], argv[11]);
 
-  players.push_back(p1);
-  players.push_back(p2);
-  players.push_back(p3);
-  players.push_back(p4);
-  
+  game_players.push_back(p1);
+  game_players.push_back(p2);
+  game_players.push_back(p3);
+  game_players.push_back(p4);
 
+
+  //print executable and all command line arguments 
+  for (int i = 0; i < argc; i++) {
+    cout << argv[i] << " ";
+  }
+  cout << endl;
+  
   //call game constructor
-  Game game = Game(p, points, shuffle, players);
+  Game game = Game(p, points, shuffle, game_players);
 
   //plays through the game
   game.play();
-  
+
 }
+
